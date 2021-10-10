@@ -2,7 +2,7 @@ module PGFPlotsXPlots
 
 using ..Weave, ..PGFPlotsX
 
-function Base.display(report::Weave.Report, m::MIME"application/pdf", figure::PGFPlotsX.Axis)
+function Base.display(report::Weave.Report, m::MIME"application/pdf", figure::PGFPlotsX.AxisLike)
 
     chunk = report.cur_chunk
 
