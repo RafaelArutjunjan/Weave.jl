@@ -179,6 +179,38 @@ register_format!("texminted", LaTeXMinted())
 
 abstract type WeaveLaTeXFormat <: LaTeXFormat end
 
+Base.@kwdef mutable struct DirectTeX <: LaTeXFormat
+    description = "LaTeX with custom code environments"
+    extension = "tex"
+    codestart = "\\begin{juliacode}"
+    codeend = "\\end{juliacode}"
+    termstart = "\\begin{minted}[texcomments = true, mathescape, fontsize=\\footnotesize, xleftmargin=0.5em]{jlcon}"
+    termend = "\\end{minted}"
+    outputstart = "\\begin{juliaout}"
+    outputend = "\\end{juliaout}"
+    mimetypes = ["application/pdf", "image/png", "text/latex", "text/plain"] # ["application/pdf", "image/png", "image/jpg", "text/latex", "text/markdown", "text/plain"]
+    fig_ext = ".tex"
+    out_width = nothing
+    out_height = nothing
+    fig_pos = nothing
+    fig_env = nothing
+    # specials
+    highlight_theme = nothing
+    template = nothing
+    keep_unicode = true
+    tex_deps =  "" # "\\usepackage{minted}"
+    # how to escape latex in verbatim/code environment
+    escape_starter = "|\$"
+    escape_closer = reverse(escape_starter)
+end
+register_format!("tex", DirectTeX())
+function set_format_options!(docformat::DirectTeX; template = nothing, _kwargs...)
+    docformat.keep_unicode = true
+    docformat.template = "{{{ :body }}}" # isnothing(template) ? "{{{ :body }}}" : get_mustache_template(template)
+end
+
+
+
 function set_format_options!(docformat::WeaveLaTeXFormat; template = nothing, highlight_theme = nothing, keep_unicode = false, _kwargs...)
     docformat.template =
         get_mustache_template(isnothing(template) ? normpath(TEMPLATE_DIR, "md2pdf.tpl") : template)
